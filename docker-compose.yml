@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  giveaway-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: giveaway-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - sqlite-data:/app/prisma
+    environment:
+      - DATABASE_URL=file:/app/prisma/dev.db
+      - SESSION_SECRET=change_me_to_a_long_random_string_1234567890
+      # OAuth and Captcha settings - replace with your values
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET:-}
+      - STEAM_API_KEY=${STEAM_API_KEY:-}
+      - TURNSTILE_SITE_KEY=${TURNSTILE_SITE_KEY:-1x00000000000000000000AA}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY:-2x00000000000000000000AB}
+      # Admin configurations (comma-separated IDs)
+      - ADMIN_DISCORD_IDS=${ADMIN_DISCORD_IDS:-}
+      - ADMIN_STEAM_IDS=${ADMIN_STEAM_IDS:-}
+
+volumes:
+  sqlite-data:

@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(uuid())
+  username      String
+  avatar        String?
+  provider      String     // "discord" or "steam" or "mock"
+  providerId    String
+  cooldownUntil DateTime?  // 24 hour lockout
+  lastIp        String?
+  lastUserAgent String?
+  lastFingerprint String?
+  isAdmin       Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  claims        ClaimLog[]
+
+  @@unique([provider, providerId])
+}
+
+model Giveaway {
+  id              String     @id @default(uuid())
+  title           String
+  description     String
+  code            String
+  active          Boolean    @default(true)
+  maxClaims       Int        @default(1)
+  claimUrl        String?
+  captchaRequired Boolean    @default(true)
+  mathRequired    Boolean    @default(true)
+  quizQuestion    String?
+  quizOptions     String?    // JSON array of options
+  quizAnswer      String?    // The correct answer option
+  createdAt       DateTime   @default(now())
+  claims          ClaimLog[]
+}
+
+model ClaimLog {
+  id          String   @id @default(uuid())
+  userId      String
+  giveawayId  String
+  claimedAt   DateTime @default(now())
+  ipAddress   String
+  userAgent   String?
+  fingerprint String?
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  giveaway Giveaway @relation(fields: [giveawayId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([giveawayId])
+}
+
+model IpCooldown {
+  ip            String   @id
+  cooldownUntil DateTime
+}
