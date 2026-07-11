@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Premium Giveaways | Grab Free Steam & Game Codes",
+  title: "Lootbox | Grab Free Steam & Game Codes",
   description: "Participate in random quizzes and solve puzzles to claim free games, codes, and gift cards instantly.",
 };
 
